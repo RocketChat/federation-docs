@@ -363,6 +363,7 @@ main() {
             *)
                 echo "[ERROR] unknown argument $1" >&2
                 help
+                exit 0
                 ;;
         esac
     done
