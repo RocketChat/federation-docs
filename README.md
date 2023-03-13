@@ -37,12 +37,12 @@ You can put the root domain for common name in the csr.
 
 # List of images (default, can vary depending on cli arguments)
 
-- docker.io/bitnami/mongodb:5.0
-- docker.io/rocketchat/rocket.chat:6.0.0
-- docker.io/matrixdotorg/synapse:v1.78.0
-- docker.io/nginx:latest
-- docker.io/redis:latest
-- docker.io/postgres:14
+- `docker.io/bitnami/mongodb:5.0`
+- `docker.io/rocketchat/rocket.chat:6.0.0`
+- `docker.io/matrixdotorg/synapse:v1.78.0`
+- `docker.io/nginx:latest`
+- `docker.io/redis:latest`
+- `docker.io/postgres:14`
 
 # tl;dr;
 
@@ -157,5 +157,6 @@ podman-compose -f conf/podman-compose.yaml down
 ```
 or
 ```sh
+# install.sh starts the containers in order automatically
 podman-compose -f conf/podman-compose.yaml up -d
 ```
