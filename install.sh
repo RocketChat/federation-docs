@@ -121,6 +121,7 @@ add_dotenv_seperator() {
 }
 
 verify_certificate() {
+    #@params certificate path, domains...
     local cert="${1?certificate path required}"
     shift
     [[ -f "$cert" ]] || error "$cert not found"
@@ -320,51 +321,51 @@ main() {
 
     while [[ -n "${1:-}" ]]; do
         case "$1" in
-            --ca-certificate)
-                ca_cert="$(realpath "$2")"
-                shift 2
-                ;;
-            --ca-private-key)
-                ca_private_key="$(realpath $2)"
-                shift 2
-                ;;
-            --certificate)
-                certificate="$(realpath $2)"
-                shift 2
-                ;;
-            --private-key)
-                private_key="$(realpath $2)"
-                shift 2
-                ;;
-            --domain)
-                domain="$2"
-                shift 2
-                ;;
-            --matrix-subdomain)
-                matrix_subdomain="$2"
-                shift 2
-                ;;
-            --podman-compose)
-                podman_compose=1
-                shift
-                ;;
-            --mongo-version)
-                mongo_version="$2"
-                shift 2
-                ;;
-            --rocketchat-version)
-                rocketchat_version="$2"
-                shift 2
-                ;;
-            --synapse-version)
-                synapse_version="$2"
-                shift 2
-                ;;
-            *)
-                echo "[ERROR] unknown argument $1" >&2
-                help
-                exit 0
-                ;;
+        --ca-certificate)
+            ca_cert="$(realpath "$2")"
+            shift 2
+            ;;
+        --ca-private-key)
+            ca_private_key="$(realpath $2)"
+            shift 2
+            ;;
+        --certificate)
+            certificate="$(realpath $2)"
+            shift 2
+            ;;
+        --private-key)
+            private_key="$(realpath $2)"
+            shift 2
+            ;;
+        --domain)
+            domain="$2"
+            shift 2
+            ;;
+        --matrix-subdomain)
+            matrix_subdomain="$2"
+            shift 2
+            ;;
+        --podman-compose)
+            podman_compose=1
+            shift
+            ;;
+        --mongo-version)
+            mongo_version="$2"
+            shift 2
+            ;;
+        --rocketchat-version)
+            rocketchat_version="$2"
+            shift 2
+            ;;
+        --synapse-version)
+            synapse_version="$2"
+            shift 2
+            ;;
+        *)
+            echo "[ERROR] unknown argument $1" >&2
+            help
+            exit 0
+            ;;
         esac
     done
 
@@ -382,6 +383,8 @@ main() {
     if [[ -z "${certificate:-}" ]]; then
         _generate_certs "$ca_cert" "${ca_private_key?ca private key required if a certificate is not passed}" "${domains[@]}"
     else : "${private_key?private key must be passed with a certificate or omit both}"; fi
+
+    verify_certificate "$certificate" "${domains[@]}"
 
     init
 
