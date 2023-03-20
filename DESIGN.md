@@ -1,6 +1,6 @@
 # Rocket.Chat x Matrix federation architecture
 
-The following diagram shows an example of how Rocket.Chat's federation works.
+The following diagram shows an example of Rocket.Chat's federation deployment.
 
 ![Rocket.Chat federation](birds-eye.svg)
 

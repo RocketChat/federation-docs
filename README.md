@@ -1,7 +1,7 @@
 # federation-airgap
 Example airgap deployment of Rocket.Chat federation with Synapse
 
-> This document shows how to use the script, for how Rocket.Chat federation, refer to [DESIGN.md](./DESIGN.md)
+> This document shows how to use the script, for how Rocket.Chat federation, refer to [DESIGN.md](./DESIGN.md) and for manual process, read [MANUAL.md](./MANUAL.md)
 
 > This document also focuses on podman instead of docker (the script also uses podman & podman-compose)
 
@@ -130,7 +130,7 @@ If you've already pulled images but with different tags than mentioned above, yo
 
 ## Persistence
 
-If using podman cli, the script created default volumes. 
+If using podman cli, the script creates some default volumes. 
 - For postgres - `rocketchat_matrix_postgres`
 - For synapse - `data` directory in your current folder
 - For mongo - `rocketchat_mongodb`
@@ -141,7 +141,7 @@ The CA certificate is mounted on the matrix container so that it can verify the 
 
 ## Network
 
-Created a network `rocketchat` if using podman cli. podman-compose created its own default project-wide network.
+Creates a network `rocketchat` if using podman cli. podman-compose creates its own default project-wise network.
 
 ## SELinux
 
@@ -151,12 +151,14 @@ Nothing specific here, the bind mounts are using the `z` opt to correctly label 
 
 The `--podman-compose` argument uses `podman-compose` tool instead of the `podman run` cli. The argument generates two files, a `.env` file, and a `podman-compose.yaml` file, both in the `conf` directory. 
 
-If you want to manually start of stop containers started with podman-compose, make sure you're one up the `conf` directory and use the `-f` options like the following
+If you want to manually start of stop the containers started with podman-compose
 ```sh
+# or (cd conf; podman-compose -f podman-compose.yaml down)
 podman-compose -f conf/podman-compose.yaml down
 ```
 or
 ```sh
 # install.sh starts the containers in order automatically
+# or (cd conf; podman-compose -f podman-compose.yaml up -d)
 podman-compose -f conf/podman-compose.yaml up -d
 ```
