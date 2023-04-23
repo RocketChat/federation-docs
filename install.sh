@@ -87,7 +87,7 @@ init() {
 		fi
 		podman volume create "${volumes[$volume]}" >/dev/null
 	done
-	echo >"$container_start_commands"
+	printf "#!/bin/sh\n\n" >"$container_start_commands"
 }
 
 podman_run() {
