@@ -9,6 +9,8 @@ readonly proxy_container_name="${PROXY_CONTAINER:-proxy}"
 readonly postgres_container_name="${POSTGRES_CONTAINER:-postgres}"
 readonly redis_container_name="${REDIS_CONTAINER:-redis}"
 
+readonly container_start_commands="${CONTAINER_START_COMMANDS_FILE:-./podman_commands.sh}"
+
 declare -A volumes=(["matrix"]="$PWD/data" ["postgres"]="rocketchat_matrix_postgres" ["mongodb"]="rocketchat_mongodb")
 
 help() {
@@ -73,18 +75,27 @@ init() {
 		fi
 		podman volume create "${volumes[$volume]}" >/dev/null
 	done
+	echo >"$container_start_commands"
 }
 
 podman_run() {
-	local name="${1?}"
+	local name="${1?}" cmd=()
 	shift
 	if ((force_update)) && podman exists "$name"; then
 		info "forcing recreate of $name container"
 		podman stop "$name" || error "failed to stop container $name"
 		podman rm "$name" || error "failed to remove container $name"
 	fi
-	podman run --name "$name" --network rocketchat \
-		-d --restart always "$@"
+	cmd=(
+		"podman"
+		"run"
+		"--name" "$name"
+		"--network" "rocketchat"
+		"-d"
+		"--restart" "always"
+	)
+	echo "${cmd[*]} $*" >>"$container_start_commands"
+	"${cmd[@]}" "$@"
 }
 
 podman_compose_run() {
