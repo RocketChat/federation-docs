@@ -197,7 +197,7 @@ setup_rocketchat() {
 
 setup_matrix() {
 	# @params homeserver domain, ca certificate path
-	local domain="${1?}" cert
+	local domain="${1?}" cert cert_file_name
 	shift
 
 	local volume_args=(
@@ -205,8 +205,9 @@ setup_matrix() {
 		"-v" "${volumes[matrix]}:/data:z"
 	)
 	for cert in "$@"; do
-		volume_args+=("-v" "$cert:$cert.pem:ro,z")
-		sed -i "/federation_custom_ca_list:/ s/\$/\n  - ${cert//\//\\\/}.pem/" ./conf/homeserver.append.yaml
+		cert_file_name="$(basename "$cert")"
+		volume_args+=("-v" "$(realpath "$cert"):/ca/${cert_file_name}.pem:ro,z")
+		sed -i "/federation_custom_ca_list:/ s/\$/\n  - /ca/${cert_file_name//\//\\\/}.pem/" ./conf/homeserver.append.yaml
 	done
 
 	info "Generating tokens for app service"
