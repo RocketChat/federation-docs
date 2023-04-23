@@ -219,7 +219,7 @@ setup_matrix() {
 	)
 	for cert in "$@"; do
 		cert_file_name="$(basename "$cert")"
-		volume_args+=("-v" "$(realpath "$cert"):/ca/${cert_file_name}.pem:ro,z")
+		volume_args+=("-v" "$cert:/ca/${cert_file_name}.pem:ro,z")
 		sed -i "/federation_custom_ca_list:/ s/\$/\n  - \/ca\/${cert_file_name//\//\\\/}.pem/" ./conf/homeserver.append.yaml
 	done
 
@@ -385,7 +385,7 @@ main() {
 			local cert=
 			for cert in "$@"; do
 				grep -Eq "^--" <<<"$cert" && break
-				ca_certs+=("$cert")
+				ca_certs+=("$(realpath "$cert")")
 				shift
 			done
 			;;
