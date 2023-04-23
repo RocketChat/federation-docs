@@ -15,15 +15,16 @@ declare -A volumes=(["matrix"]="$PWD/data" ["postgres"]="rocketchat_matrix_postg
 
 help() {
 	cat <<EOF
-    Usage: ./install.sh --ca-certificate [path to ca cert] --certificate [path to cert] --private key [path to private key] --domain [domain] [...args]
+Usage: ./install.sh --ca-certificate [path to ca cert] --certificate [path to cert] --private key [path to private key] --domain [domain] [...args]
 
     --ca-certificate         path (relative or absolute) to your CA certificate
     --domain                 your room domain, or on which domain your Rocket.Chat instance will live
     --certificate            path to your CA signed certificate
     --private-key            path to your certificate's private key
 
-    [Optional]
+[Optional]
 
+    --ca-certificates       a list of ca certificate (in case of ca chain)
     --ca-private-key        private key of your CA, used to auto generate a certificate (don't pass certificate or private key if using this)
     --matrix-subdomain      subdomain on which your matrix server will live (defaults to "matrix")
     --mongo-version         mongodb version (defaults to 5.0)
