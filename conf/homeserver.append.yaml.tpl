@@ -27,4 +27,3 @@ allow_public_rooms_without_auth: true
 allow_public_rooms_over_federation: true
 
 federation_custom_ca_list:
-  - /ca_certificate.pem
