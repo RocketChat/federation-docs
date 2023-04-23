@@ -94,7 +94,7 @@ podman_run() {
 		"-d"
 		"--restart" "always"
 	)
-	echo "${cmd[*]} $*" >>"$container_start_commands"
+	printf "%s %s\n\n" "${cmd[*]}" "$*" >>"$container_start_commands"
 	"${cmd[@]}" "$@"
 }
 
