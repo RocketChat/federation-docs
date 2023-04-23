@@ -39,6 +39,17 @@ error() {
 	exit 1
 }
 
+quote_args() {
+	local args=() arg
+	for arg in "$@"; do
+		if ! [[ "$arg" =~ ^- ]] || [[ "$arg" =~ = ]]; then # an argument, not immediately setting value
+			arg="\"$arg\""
+		fi
+		args+=("$arg")
+	done
+	echo "${args[@]}"
+}
+
 info() {
 	echo "[INFO] $*"
 }
@@ -95,8 +106,9 @@ podman_run() {
 		"-d"
 		"--restart" "always"
 	)
-	printf "%s %s\n\n" "${cmd[*]}" "$*" >>"$container_start_commands"
-	"${cmd[@]}" "$@"
+	cmd+=($(quote_args "$@"))
+	printf "%s\n\n" "${cmd[*]}" >>"$container_start_commands"
+	"${cmd[@]}"
 }
 
 podman_compose_run() {
