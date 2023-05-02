@@ -106,8 +106,10 @@ podman_run() {
 		"-d"
 		"--restart" "always"
 	)
-	cmd+=($(quote_args "$@"))
-	printf "%s\n\n" "${cmd[*]}" >>"$container_start_commands"
+	local quoted_cmd=("${cmd[@]}")
+	quoted_cmd+=($(quote_args "$@"))
+	cmd+=("$@")
+	printf "%s\n\n" "${quoted_cmd[*]}" >>"$container_start_commands"
 	"${cmd[@]}"
 }
 
