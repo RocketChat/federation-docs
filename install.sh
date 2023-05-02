@@ -166,6 +166,9 @@ verify_certificate() {
 }
 
 verify_ca_certificate_paths() {
+	if (($# == 0)); then
+		error "at least one ca certificate is required"
+	fi
 	local path
 	for path in "$@"; do
 		[[ -f "$path" ]] || error "$path certificate not found"
@@ -357,7 +360,6 @@ main() {
 		certificate \
 		private_key \
 		matrix_subdomain \
-		ca_cert \
 		ca_private_key \
 		mongo_version \
 		rocketchat_version \
@@ -374,10 +376,6 @@ main() {
 
 	while [[ -n "${1:-}" ]]; do
 		case "$1" in
-		--ca-certificate)
-			ca_cert="$(realpath "$2")"
-			shift 2
-			;;
 		--ca-private-key)
 			ca_private_key="$(realpath "$2")"
 			shift 2
@@ -386,7 +384,7 @@ main() {
 			shift
 			local cert=
 			for cert in "$@"; do
-				grep -Eq "^--" <<<"$cert" && break
+				grep -Eq "^--" <<<"$cert" && break || true
 				ca_certs+=("$(realpath "$cert")")
 				shift
 			done
@@ -440,20 +438,18 @@ main() {
 		"${mongo_version:=5.0}" \
 		"${matrix_subdomain:=matrix}" \
 		"${domain?domain value is required}" \
-		"${ca_cert?ca certificate path must be passed}" \
 		"${rocketchat_version:=6.0.0}" \
 		"${synapse_version:=v1.78.0}"
-
-	ca_certs+=("$ca_cert")
 
 	local domains=("$domain" "$matrix_subdomain.${domain}")
 
 	if [[ -z "${certificate:-}" ]]; then
-		_generate_certs "$ca_cert" "${ca_private_key?ca private key required if a certificate is not passed}" "${domains[@]}"
+		info "generating certificate automatically, assuming first ca cert to me the private key sister"
+		_generate_certs "${ca_certs[0]}" "${ca_private_key?ca private key required if a certificate is not passed}" "${domains[@]}"
 	else : "${private_key?private key must be passed with a certificate or omit both}"; fi
 
-	verify_certificate "$certificate" "${domains[@]}"
 	verify_ca_certificate_paths "${ca_certs[@]}"
+	verify_certificate "$certificate" "${domains[@]}"
 
 	init
 
